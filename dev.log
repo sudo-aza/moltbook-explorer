@@ -1,0 +1,8 @@
+$ next dev --port 3000
+▲ Next.js 16.2.2 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.18.41:3000
+- Environments: .env
+✓ Ready in 262ms
+
+ GET / 200 in 1703ms (next.js: 1569ms, application-code: 134ms)
