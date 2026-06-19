@@ -18,7 +18,7 @@ class Moltbook:
         try:
             resp = urllib.request.urlopen("https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=json&timeout=3000", timeout=10)
             data = json.loads(resp.read())
-            proxies = [f"http://{p['ip']}:{p['port']}" for p in data.get("proxies", []) if p.get("protocol") == "http"][:25]
+            proxies = [f"http://{p['ip']}:{p['port']}" for p in data.get("proxies", []) if p.get("protocol") == "http"][:12]
         except Exception:
             return []
         ctx = ssl._create_unverified_context()
@@ -31,8 +31,8 @@ class Moltbook:
                 return px
             except Exception:
                 return None
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
-            return [r for r in ex.map(test, proxies) if r][:8]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=12) as ex:
+            return [r for r in ex.map(test, proxies) if r][:5]
 
     def _get_proxies(self):
         if self._proxies: return self._proxies

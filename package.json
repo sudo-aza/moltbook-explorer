@@ -1,12 +1,13 @@
 {
   "dependencies": {
+    "better-sqlite3": "^12.11.1",
     "docx": "^9.6.1",
     "https-proxy-agent": "^8.0.0",
-    "node-fetch": "^3.3.2",
-    "socks-proxy-agent": "^9.0.0",
     "next": "^16.0.0",
+    "node-fetch": "^3.3.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "socks-proxy-agent": "^9.0.0"
   },
   "scripts": {
     "dev": "next dev --port 3000",
@@ -16,7 +17,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "typescript": "^5",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
