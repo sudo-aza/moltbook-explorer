@@ -34,6 +34,17 @@ type Snapshot = {
   post_ids: string;
 };
 
+type Mover = {
+  id: string;
+  title: string;
+  agent: string;
+  prev_rank: number;
+  curr_rank: number;
+  change: number;
+  sort: string;
+  time: string;
+};
+
 type Data = {
   generated_at: string;
   stats: { total_posts: number; total_agents: number; total_comments: number; total_snapshots: number };
@@ -41,7 +52,7 @@ type Data = {
   newest_posts: Post[];
   agents: Agent[];
   submolts: Submolt[];
-  snapshots: Snapshot[];
+  movers: Mover[];
 };
 
 function score(p: Post) {
@@ -91,7 +102,7 @@ function PostCard({ p }: { p: Post }) {
 
 export default function Explorer() {
   const [data, setData] = useState<Data | null>(null);
-  const [tab, setTab] = useState<"top" | "new" | "agents" | "submolts">("top");
+  const [tab, setTab] = useState<"top" | "new" | "rising" | "agents" | "submolts">("top");
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
 
@@ -148,7 +159,7 @@ export default function Explorer() {
         {/* Tabs + Search */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <div className="flex border-b-2 border-[#2a2a3a]">
-            {(["top", "new", "agents", "submolts"] as const).map((t) => (
+            {(["top", "new", "rising", "agents", "submolts"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
@@ -158,7 +169,7 @@ export default function Explorer() {
                     : "text-[#8888a0] border-transparent hover:text-[#e0e0e8]"
                 }`}
               >
-                {t === "top" ? "Top Posts" : t === "new" ? "Newest" : t === "agents" ? "Agents" : "Submolts"}
+                {t === "top" ? "Top Posts" : t === "new" ? "Newest" : t === "rising" ? "Rising" : t === "agents" ? "Agents" : "Submolts"}
               </button>
             ))}
           </div>
@@ -184,6 +195,38 @@ export default function Explorer() {
           <div className="flex flex-col gap-2">
             {filteredNew.length ? filteredNew.map((p) => <PostCard key={p.id} p={p} />) : (
               <p className="text-[#8888a0]">No posts found.</p>
+            )}
+          </div>
+        )}
+
+        {tab === "rising" && (
+          <div>
+            {data.movers.length === 0 ? (
+              <p className="text-[#8888a0]">Not enough snapshots yet to detect ranking changes. Check back after more data collection cycles.</p>
+            ) : (
+              <>
+                <p className="text-sm text-[#8888a0] mb-3">Posts that moved 5+ positions between collection cycles. Green = rising, red = falling.</p>
+                <div className="flex flex-col gap-2">
+                  {data.movers.map((m, i) => (
+                    <div key={m.id + m.time + i} className="flex gap-3 p-3 rounded-lg border border-[#2a2a3a] bg-[#12121a]">
+                      <div className="min-w-[56px] text-center pt-1">
+                        <div className={`text-xl font-bold ${m.change > 0 ? "text-[#4ade80]" : "text-[#f87171]"}`}>
+                          {m.change > 0 ? "+" : ""}{m.change}
+                        </div>
+                        <div className="text-[10px] text-[#8888a0] uppercase">{m.sort}</div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs text-[#8888a0] mb-1">
+                          <span className="text-[#ff8c5a] font-semibold">{m.agent}</span>
+                          {" "}· #{m.curr_rank + 1} now
+                          {m.prev_rank < 51 ? <span> (was #{m.prev_rank + 1})</span> : <span> (new entry)</span>}
+                        </div>
+                        <div className="text-[15px] font-semibold leading-snug">{m.title}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}

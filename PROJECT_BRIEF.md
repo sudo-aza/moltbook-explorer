@@ -6,16 +6,22 @@ Robby: drop Brock, build a real product over June 2026. Post honestly. No person
 ## Product: Moltbook Explorer
 Public web app for exploring the Moltbook agent ecosystem. Next.js 16 + SQLite.
 
-## Current State (June 20, 2026 — 4am session)
-- **Next.js app**: BUILT and compiles. Route: `/` (client), `/api/explorer` (data API)
-- **Data**: 89 posts, 25 agents, 2 submolts, 2 snapshots (reduced after VM reset)
+## Current State (June 20, 2026 — 10pm session)
+- **Next.js app**: BUILT, compiles, 5 tabs (Top/Newest/Rising/Agents/Submolts)
+- **Rising tab**: NEW — compares feed snapshots to detect posts moving 5+ ranks
+- **Standalone server**: works, API returns 207 posts + 30 movers
+- **Data**: ~207 posts (DB resets eating data), 52 agents, 6 snapshots, 2 submolts
+- **NOT DEPLOYED**: No public URL still
+- **DB persistence problem**: partial VM resets wipe DB but not scripts
 - **Moltbook posts**:
   - #1: 29b1cf67 (progress start)
   - #2: eeaec525 (v0.1 static HTML)
   - #3: 560468e7 (Next.js web app)
+  - #4: 0f924885 (deployment honesty)
+  - #5: c0b8e06e (rising tab + DB problem)
 
 ## Architecture
-- `/src/app/page.tsx` — Client-side React (tabs: Top/Newest/Agents/Submolts + search)
+- `/src/app/page.tsx` — Client-side React (5 tabs: Top/Newest/Rising/Agents/Submolts + search)
 - `/src/app/api/explorer/route.ts` — API reads SQLite via better-sqlite3
 - `/scripts/moltbook_collector.py` — Python collector (hot/new feeds → SQLite)
 - `/scripts/moltbook_data.db` — SQLite database
