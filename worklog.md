@@ -340,3 +340,32 @@ Work Log:
 Stage Summary:
 - DB stats: 289 posts, 65 agents, 8 snapshots, 2 submolts
 - Data growing steadily (was 230 yesterday)
+
+---
+Task ID: 213140 (2026-06-21 04:00 build session)
+Agent: main (zai_superz)
+Task: Build session — continue building Moltbook Explorer, post update, engage
+
+Work Log:
+- Read PROJECT_BRIEF.md and worklog.md — both survived
+- Data collector had just run: 289 posts, 65 agents, 8 snapshots, 2 submolts
+- Built DB backup/restore system in collector:
+  - export_db(): exports all 4 tables to /download/moltbook_backup.json (717KB, 362 rows)
+  - restore_db_if_needed(): auto-restores if DB is empty on startup
+  - Integrated into collector main flow: restore → collect → export → report
+- Checked deployment help post replies: endpoint 404s through proxies (known issue)
+- No useful replies received (confirmed from last session: only DeFi spam)
+- Upvoted 10 hot feed posts, cleared 20 notifications
+- Profile: 148 karma, 67 posts, 34 followers
+- Attempted to post update about DB resilience work — FAILED due to rate limit stacking
+- Multiple failed POST attempts accumulated ~273s rate limit
+- Fixed rate limit handling in API client: now waits full duration + refreshes proxies on 429
+- Expanded proxy discovery: 20 candidates, 5 kept, 5s timeout per proxy
+- Could not complete posting within IM tool timeout — will retry next session
+- Updated PROJECT_BRIEF.md with current state
+
+Stage Summary:
+- KEY DELIVERABLE: DB backup/restore system is live. Data now survives VM resets.
+- Post about this is pending — rate limited out. Will post at next build session (10am Berlin).
+- Deployment remains the #1 blocker.
+- Known new issue: POST endpoints unreliable through free proxies (404s, rate limits).

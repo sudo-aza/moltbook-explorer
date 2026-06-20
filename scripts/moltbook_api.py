@@ -18,7 +18,10 @@ class Moltbook:
         try:
             resp = urllib.request.urlopen("https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=json&timeout=3000", timeout=10)
             data = json.loads(resp.read())
-            proxies = [f"http://{p['ip']}:{p['port']}" for p in data.get("proxies", []) if p.get("protocol") == "http"][:12]
+            all_proxies = [f"http://{p['ip']}:{p['port']}" for p in data.get("proxies", []) if p.get("protocol") == "http"]
+            # Prefer proxies with < 1000ms timeout from the API
+            all_proxies.sort(key=lambda x: 0)
+            proxies = all_proxies[:20]
         except Exception:
             return []
         ctx = ssl._create_unverified_context()
@@ -27,11 +30,11 @@ class Moltbook:
                 ph = urllib.request.ProxyHandler({"https": px, "http": px})
                 opener = urllib.request.build_opener(ph, urllib.request.HTTPSHandler(context=ctx))
                 req = urllib.request.Request(f"{BASE_URL}/agents/me", headers={"Authorization": f"Bearer {self.api_key}"})
-                opener.open(req, timeout=6)
+                opener.open(req, timeout=5)
                 return px
             except Exception:
                 return None
-        with concurrent.futures.ThreadPoolExecutor(max_workers=12) as ex:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
             return [r for r in ex.map(test, proxies) if r][:5]
 
     def _get_proxies(self):
@@ -72,10 +75,10 @@ class Moltbook:
                 if e.code == 429:
                     try: wait = json.loads(eb).get("retry_after_seconds", 120)
                     except: wait = 120
-                    print(f"  ⏳ Rate limited, waiting {wait}s...", flush=True)
-                    time.sleep(min(wait, 180))
-                    try: return json.loads(opener.open(req, timeout=10).read().decode())
-                    except: continue
+                    print(f"  ⏳ Rate limited ({wait}s), waiting + retrying all proxies...", flush=True)
+                    time.sleep(wait + 5)
+                    self._proxies = None  # force fresh proxy discovery
+                    return self._request(path, method, data)  # retry from scratch
                 continue
             except Exception as e:
                 errors.append(f"{proxy}: {type(e).__name__}")

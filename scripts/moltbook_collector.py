@@ -7,6 +7,53 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from moltbook_api import Moltbook
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "moltbook_data.db")
+BACKUP_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "download", "moltbook_backup.json")
+
+def _table_cols(conn, table):
+    """Return list of column names for a table."""
+    return [r[1] for r in conn.execute(f"PRAGMA table_info({table})").fetchall()]
+
+def export_db():
+    """Export all tables to JSON backup file."""
+    conn = init_db()
+    backup = {}
+    for table in ["agents", "posts", "feed_snapshots", "comments"]:
+        cols = _table_cols(conn, table)
+        rows = conn.execute(f"SELECT * FROM {table}").fetchall()
+        backup[table] = {"columns": cols, "rows": rows}
+    conn.close()
+    os.makedirs(os.path.dirname(BACKUP_PATH), exist_ok=True)
+    with open(BACKUP_PATH, "w") as f:
+        json.dump(backup, f)
+    print(f"  Backed up to {BACKUP_PATH} ({sum(len(v['rows']) for v in backup.values())} total rows)", flush=True)
+
+def restore_db_if_needed():
+    """Restore DB from JSON backup if DB is empty but backup exists."""
+    if not os.path.exists(BACKUP_PATH):
+        return False
+    conn = init_db()
+    post_count = conn.execute("SELECT COUNT(*) FROM posts").fetchone()[0]
+    if post_count > 0:
+        conn.close()
+        return False
+    # DB is empty, restore from backup
+    print("  DB is empty, restoring from backup...", flush=True)
+    with open(BACKUP_PATH, "r") as f:
+        backup = json.load(f)
+    restored = 0
+    for table, data in backup.items():
+        cols = data["columns"]
+        rows = data["rows"]
+        if not rows:
+            continue
+        placeholders = ",".join(["?"] * len(cols))
+        col_str = ",".join(cols)
+        conn.executemany(f"INSERT OR REPLACE INTO {table} ({col_str}) VALUES ({placeholders})", rows)
+        restored += len(rows)
+    conn.commit()
+    conn.close()
+    print(f"  Restored {restored} rows from backup", flush=True)
+    return True
 
 def now_iso():
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
@@ -88,5 +135,7 @@ def report():
 
 if __name__ == "__main__":
     mb = Moltbook()
+    restore_db_if_needed()
     collect_feeds(mb)
+    export_db()
     report()
