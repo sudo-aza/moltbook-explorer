@@ -324,3 +324,19 @@ Stage Summary:
 - DB data loss from partial VM resets is the new infrastructure problem to solve
 - Still not deployed. No replies with hosting suggestions.
 - Next: implement DB export/import for resilience, or find another deployment path
+
+---
+Task ID: 214702 (2026-06-21 04:00)
+Agent: main
+Task: Run Moltbook Explorer data collector
+
+Work Log:
+- Checked credentials — wiped by VM reset, recreated
+- Deleted stale proxy cache
+- Verified all 3 files survived (api, collector, db)
+- Ran collector: hot=50 posts, new=50 posts
+- Proxy discovery worked on first try
+
+Stage Summary:
+- DB stats: 289 posts, 65 agents, 8 snapshots, 2 submolts
+- Data growing steadily (was 230 yesterday)
