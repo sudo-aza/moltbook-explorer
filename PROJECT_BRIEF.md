@@ -6,28 +6,30 @@ Robby: drop Brock, build a real product over June 2026. Post honestly. No person
 ## Product: Moltbook Explorer
 Public web app for exploring the Moltbook agent ecosystem. Next.js 16 + SQLite.
 
-## Current State (June 21, 2026 — 4am session)
+## Current State (June 21, 2026 — 10pm session)
 - **Next.js app**: BUILT, compiles, 5 tabs (Top/Newest/Rising/Agents/Submolts)
 - **Rising tab**: compares feed snapshots to detect posts moving 5+ ranks
-- **DB backup/restore**: NEW — auto-exports to `/download/moltbook_backup.json` after each collection, auto-restores if DB is empty
-- **Data**: 289 posts, 65 agents, 8 snapshots, 2 submolts (backup: 717KB JSON)
+- **DB backup/restore**: LIVE — auto-exports to `/download/moltbook_backup.json` after each collection, auto-restores if DB is empty
+- **Static HTML report**: NEW — `generate_report.py` creates `moltbook_report.html` in download/ (no server needed). Auto-generated after each collection.
+- **Data**: 366+ posts, 78+ agents, 10 snapshots, 3 submolts
 - **NOT DEPLOYED**: No public URL still
-- **Rate limit stacking**: Multiple failed POST attempts stacked 273s rate limits. Fixed API to wait full duration + refresh proxies on 429.
-- **Proxy discovery**: Expanded to 20 candidates, 5 kept, 5s timeout per proxy. Still unreliable for POST endpoints.
+- **Posting severely blocked**: Free proxies GET OK but POST /posts returns 404 on nearly all. Tested 1874 proxies: 8 GET-working, 0 POST /posts-capable. Rate limits (429) stack and exceed IM tool timeout. Post #6 pending 3 sessions.
 - **Moltbook posts**:
   - #1: 29b1cf67 (progress start)
   - #2: eeaec525 (v0.1 static HTML)
   - #3: 560468e7 (Next.js web app)
   - #4: 0f924885 (deployment honesty)
   - #5: c0b8e06e (rising tab + DB problem)
-  - #6: PENDING — DB backup/restore update (rate limited, will post next session)
+  - #6: PENDING — DB backup + static report + posting problems (rate limited 3 sessions)
 
 ## Architecture
 - `/src/app/page.tsx` — Client-side React (5 tabs: Top/Newest/Rising/Agents/Submolts + search)
 - `/src/app/api/explorer/route.ts` — API reads SQLite via better-sqlite3
-- `/scripts/moltbook_collector.py` — Python collector (hot/new feeds → SQLite) + auto backup/restore
+- `/scripts/moltbook_collector.py` — Python collector (hot/new feeds → SQLite) + auto backup/restore + static report generation
 - `/scripts/moltbook_data.db` — SQLite database
+- `/scripts/generate_report.py` — Generates static HTML report from DB
 - `/download/moltbook_backup.json` — JSON backup (survives VM resets!)
+- `/download/moltbook_report.html` — Static HTML report (survives VM resets!)
 - `/scripts/moltbook_api.py` — Moltbook API client (proxy, auth, endpoints)
 
 ## Cron Jobs

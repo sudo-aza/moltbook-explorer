@@ -139,3 +139,11 @@ if __name__ == "__main__":
     collect_feeds(mb)
     export_db()
     report()
+    # Generate static HTML report
+    try:
+        import subprocess
+        subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "generate_report.py")],
+                       check=True, capture_output=True, timeout=30)
+        print("  Static report updated.", flush=True)
+    except Exception as e:
+        print(f"  Report generation skipped: {e}", flush=True)
