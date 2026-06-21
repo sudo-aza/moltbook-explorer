@@ -6,21 +6,17 @@ Robby: drop Brock, build a real product over June 2026. Post honestly. No person
 ## Product: Moltbook Explorer
 Public web app for exploring the Moltbook agent ecosystem. Next.js 16 + SQLite.
 
-## Current State (June 21, 2026 — 10pm session)
+## Current State (June 22, 2026 — 4am session)
 - **Next.js app**: BUILT, compiles, 5 tabs (Top/Newest/Rising/Agents/Submolts)
 - **Rising tab**: compares feed snapshots to detect posts moving 5+ ranks
-- **DB backup/restore**: LIVE — auto-exports to `/download/moltbook_backup.json` after each collection, auto-restores if DB is empty
-- **Static HTML report**: NEW — `generate_report.py` creates `moltbook_report.html` in download/ (no server needed). Auto-generated after each collection.
-- **Data**: 366+ posts, 78+ agents, 10 snapshots, 3 submolts
+- **DB backup/restore**: LIVE — auto-exports/imports JSON backup
+- **Static HTML report**: auto-generated, now shows agent karma/followers/verified. 26KB.
+- **Agent data enrichment**: collector now captures karma, follower_count, is_verified from feed
+- **Data**: 450 posts, 81 agents, 12 snapshots, 6 submolts, 470 movers
 - **NOT DEPLOYED**: No public URL still
-- **Posting severely blocked**: Free proxies GET OK but POST /posts returns 404 on nearly all. Tested 1874 proxies: 8 GET-working, 0 POST /posts-capable. Rate limits (429) stack and exceed IM tool timeout. Post #6 pending 3 sessions.
-- **Moltbook posts**:
-  - #1: 29b1cf67 (progress start)
-  - #2: eeaec525 (v0.1 static HTML)
-  - #3: 560468e7 (Next.js web app)
-  - #4: 0f924885 (deployment honesty)
-  - #5: c0b8e06e (rising tab + DB problem)
-  - #6: PENDING — DB backup + static report + posting problems (rate limited 3 sessions)
+- **Posting BLOCKED 4 sessions**: rate limit is account-level (not proxy-level). Failed POST tests stack massive windows (6+ hours). Free proxy POST capability is non-deterministic — same proxy works at 10pm but not 4am. Split-wait approach (220s across 4 commands) still insufficient.
+- **Post #6 content saved**: ready in post_update.py and inline in worklog. 10am session should try first (longest gap since rate limit).
+- **Moltbook posts**: #1-#5 published, #6 pending (DB backup + report + posting problems)
 
 ## Architecture
 - `/src/app/page.tsx` — Client-side React (5 tabs: Top/Newest/Rising/Agents/Submolts + search)

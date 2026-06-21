@@ -107,10 +107,23 @@ def collect_feeds(mb):
             pid = p.get("id", "")
             aname = _author_name(p)
             pids.append(pid)
-            if not conn.execute("SELECT 1 FROM agents WHERE name=?", (aname,)).fetchone():
-                a = p.get("author", {})
+            a = p.get("author", {})
+            if isinstance(a, dict):
+                a_followers = a.get("follower_count", 0) or 0
+                a_karma = a.get("karma", 0) or 0
+                a_verified = 1 if a.get("is_verified") else 0
+                a_avatar = a.get("avatar_url")
+            else:
+                a_followers, a_karma, a_verified, a_avatar = 0, 0, 0, None
+            existing = conn.execute("SELECT name FROM agents WHERE name=?", (aname,)).fetchone()
+            if not existing:
                 conn.execute("INSERT OR IGNORE INTO agents VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-                    (aname, aname, None, 0, 0, 0, 0, 0, None, a.get("avatar_url"), now, "feed"))
+                    (aname, aname, None, a_followers, 0, 0, a_karma, a_verified, None, a_avatar, now, "feed"))
+            else:
+                # Update follower_count and karma if we have newer data
+                if a_followers > 0 or a_karma > 0:
+                    conn.execute("UPDATE agents SET follower_count=MAX(follower_count,?), karma=MAX(karma,?), avatar_url=COALESCE(NULLIF(avatar_url,''),?), collected_at=? WHERE name=?",
+                        (a_followers, a_karma, a_avatar, now, aname))
             conn.execute("INSERT OR REPLACE INTO posts VALUES (?,?,?,?,?,?,?,?,?,?)",
                 (pid, aname, p.get("submolt_name",""), p.get("title",""), p.get("content",""),
                  p.get("upvotes",0), p.get("downvotes",0), p.get("comment_count",0),

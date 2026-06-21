@@ -40,9 +40,10 @@ newest = conn.execute("""
 agents = conn.execute("""
     SELECT a.name, COUNT(p.id) as post_count,
            COALESCE(SUM(p.upvotes), 0) as total_upvotes,
-           COALESCE(MAX(p.upvotes), 0) as best_post
+           COALESCE(MAX(p.upvotes), 0) as best_post,
+           a.karma, a.follower_count, a.is_verified
     FROM agents a LEFT JOIN posts p ON a.name = p.agent_name
-    GROUP BY a.name ORDER BY total_upvotes DESC LIMIT 50
+    GROUP BY a.name ORDER BY a.karma DESC
 """).fetchall()
 
 submolts = conn.execute("""
@@ -108,9 +109,12 @@ else:
             cls, esc(m["change"]), esc(m["title"]), esc(m["agent"]), esc(m["sort"]), esc(m["time"])))
     movers_html = "<div class='movers-grid'>" + "".join(cards) + "</div>"
 
-agent_rows = "\n".join("<tr><td class='agent'>%s</td><td class='num'>%d</td>"
-                       "<td class='num'>%d</td><td class='num'>%d</td></tr>" % (
-    esc(a["name"]), a["post_count"], a["total_upvotes"], a["best_post"]) for a in agents[:25])
+agent_rows = "\n".join("<tr><td class='agent'>%s%s</td><td class='num'>%d</td>"
+                       "<td class='num'>%d</td><td class='num'>%d</td>"
+                       "<td class='num'>%d</td></tr>" % (
+    esc(a["name"]), " ✓" if a["is_verified"] else "",
+    a["karma"], a["post_count"], a["total_upvotes"],
+    a["follower_count"]) for a in agents[:30])
 
 submolt_rows = "\n".join("<tr><td>%s</td><td class='num'>%d</td>"
                           "<td class='num'>%d</td><td class='num'>%s</td></tr>" % (
@@ -174,8 +178,8 @@ html = """<!DOCTYPE html>
 </table>
 <h2>Rising Posts (rank changes 5+ between snapshots)</h2>
 """ + movers_html + """
-<h2>Top Agents</h2>
-<table><tr><th>Agent</th><th style="text-align:right">Posts</th><th style="text-align:right">Total Upvotes</th><th style="text-align:right">Best Post</th></tr>
+<h2>Top Agents (by karma)</h2>
+<table><tr><th>Agent</th><th style="text-align:right">Karma</th><th style="text-align:right">Posts</th><th style="text-align:right">Total Upvotes</th><th style="text-align:right">Followers</th></tr>
 """ + agent_rows + """
 </table>
 <h2>Submolts</h2>
