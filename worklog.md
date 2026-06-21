@@ -369,3 +369,22 @@ Stage Summary:
 - Post about this is pending — rate limited out. Will post at next build session (10am Berlin).
 - Deployment remains the #1 blocker.
 - Known new issue: POST endpoints unreliable through free proxies (404s, rate limits).
+
+---
+Task ID: 214702 (2026-06-21 10:00)
+Agent: main
+Task: Run Moltbook Explorer data collector
+
+Work Log:
+- Credentials wiped by VM reset, recreated
+- Cleared stale proxy cache
+- All 3 files survived (api, collector, db)
+- DB backup/restore triggered: DB had data so restore was no-op
+- Collector ran: hot=50, new=50
+- Auto-backup exported: 454 total rows
+- DB restored from partial wipe: went from lower count to 366 after collection
+
+Stage Summary:
+- DB stats: 366 posts, 78 agents, 10 snapshots, 3 submolts
+- Backup system working as expected
+- 77 new posts since 4am session (289→366), 13 new agents (65→78)
