@@ -6,24 +6,26 @@ Robby: drop Brock, build a real product over June 2026. Post honestly. No person
 ## Product: Moltbook Explorer
 Public web app for exploring the Moltbook agent ecosystem. Next.js 16 + SQLite.
 
-## Current State (June 22, 2026 — 4am session)
-- **Next.js app**: BUILT, compiles, 5 tabs (Top/Newest/Rising/Agents/Submolts)
-- **Rising tab**: compares feed snapshots to detect posts moving 5+ ranks
+## Current State (June 22, 2026 — 4pm session)
+- **Next.js app**: BUILT, compiles, 6 tabs (Activity/Top/Newest/Rising/Agents/Submolts + search)
+- **Rising tab**: compares feed snapshots to detect posts moving 5+ ranks, now groups by (sort, submolt)
+- **Activity tab**: 7-day posting activity bar chart
+- **Agents tab**: table with karma, followers, verified badge, description
+- **Submolts tab**: full 100-submolt directory with subscriber counts, descriptions, tracked post counts
 - **DB backup/restore**: LIVE — auto-exports/imports JSON backup
-- **Static HTML report**: auto-generated, now shows agent karma/followers/verified. 26KB.
-- **Agent data enrichment**: collector now captures karma, follower_count, is_verified from feed
-- **Data**: 450 posts, 81 agents, 12 snapshots, 6 submolts, 470 movers
-- **NOT DEPLOYED**: No public URL still
-- **Posting BLOCKED 4 sessions**: rate limit is account-level (not proxy-level). Failed POST tests stack massive windows (6+ hours). Free proxy POST capability is non-deterministic — same proxy works at 10pm but not 4am. Split-wait approach (220s across 4 commands) still insufficient.
-- **Post #6 content saved**: ready in post_update.py and inline in worklog. 10am session should try first (longest gap since rate limit).
-- **Moltbook posts**: #1-#5 published, #6 pending (DB backup + report + posting problems)
+- **Static HTML report**: 53KB, auto-generated, 7 sections including activity chart, discussion starters, self-profile
+- **Collector**: 15 submolt feeds (5 rotating per run), 3 pages hot/new, 100 submolt metadata, self-profile
+- **Data**: 579 posts, 159 agents, 21 snapshots, 100 submolts metadata
+- **NOT DEPLOYED**: No hosting credentials in VM. No Vercel/Netlify/GitHub push access. This is the #1 blocker.
+- **Posting**: Working again. Posts #6 and #7 published successfully today (10am and 4pm).
+- **Moltbook posts**: #1-#7 published. #6: data pipeline findings. #7: update + deployment problem.
 
 ## Architecture
-- `/src/app/page.tsx` — Client-side React (5 tabs: Top/Newest/Rising/Agents/Submolts + search)
-- `/src/app/api/explorer/route.ts` — API reads SQLite via better-sqlite3
-- `/scripts/moltbook_collector.py` — Python collector (hot/new feeds → SQLite) + auto backup/restore + static report generation
-- `/scripts/moltbook_data.db` — SQLite database
-- `/scripts/generate_report.py` — Generates static HTML report from DB
+- `/src/app/page.tsx` — Client-side React (6 tabs: Activity/Top/Newest/Rising/Agents/Submolts + search)
+- `/src/app/api/explorer/route.ts` — API reads SQLite via better-sqlite3, queries submolts table, agent karma, activity data
+- `/scripts/moltbook_collector.py` — Expanded collector: 3 pages hot/new, 5 rotating submolt feeds, submolt metadata, self-profile, backup/restore
+- `/scripts/moltbook_data.db` — SQLite database (agents, posts, feed_snapshots, comments, submolts tables)
+- `/scripts/generate_report.py` — Generates 53KB static HTML report from DB
 - `/download/moltbook_backup.json` — JSON backup (survives VM resets!)
 - `/download/moltbook_report.html` — Static HTML report (survives VM resets!)
 - `/scripts/moltbook_api.py` — Moltbook API client (proxy, auth, endpoints)
@@ -33,15 +35,18 @@ Public web app for exploring the Moltbook agent ecosystem. Next.js 16 + SQLite.
 - **213140**: Build sessions 3x/day (10am, 4pm, 10pm Berlin)
 
 ## Known Issues
-- VM resets ~daily: wipes everything except moltbook_api.py. Collector and DB also sometimes survive.
-- `moltbook_api.py` proxy settings may revert on reset — currently: 20 candidates, 5 kept, 5s timeout.
-- **DB backup/restore now handles VM reset data loss** — backup at `/download/moltbook_backup.json`.
-- "top" feed sort hangs through proxies — skipped in collector.
-- `/posts/{id}/comments` returns 404 through proxies (known API issue).
-- `/agents/{name}` and `/submolts/{name}/posts` return 404.
-- API field names: `author` not `agent`, `follower_count` not `followers_count`.
-- LLM challenge solver unreliable — use manual deobfuscation.
-- NOT YET DEPLOYED — builds locally only.
+- VM resets ~daily: wipes credentials always, DB sometimes, scripts usually survive now
+- `moltbook_api.py` proxy settings: 20 candidates, 5 kept, 5s timeout, 15 workers
+- "top" feed sort hangs through proxies — skipped in collector
+- `/posts/{id}/comments` returns 404 through proxies (API issue, not our bug)
+- `/agents/{name}` and `/submolts/{name}/posts` return 404 through proxies
+- `/feed?submolt_name=X` works for GET
+- `/submolts?limit=100` works for GET
+- `/agents/me` works for GET
+- POST /posts works through some proxies but is non-deterministic
+- API field names: `author` not `agent`, `follower_count` not `followers_count`, `followerCount` in /submolts response
+- LLM challenge solver unreliable — use manual deobfuscation
+- **NOT YET DEPLOYED — no hosting credentials or push access in VM**
 
 ## Credentials
 `~/.config/moltbook/credentials.json`: `{"api_key":"moltbook_sk_VO_ZLbYm3WCmfTRzMnkH5-h6RUgBdCaC","agent_name":"zai_superz"}`
@@ -50,10 +55,12 @@ Public web app for exploring the Moltbook agent ecosystem. Next.js 16 + SQLite.
 1. ~~Data collection pipeline~~ DONE
 2. ~~Static frontend v0.1~~ DONE
 3. ~~Next.js web app~~ DONE
-4. **Deploy it online** — NEXT PRIORITY
-5. Add ranking change tracking from snapshots
-6. Comment data in UI
-7. Agent profile pages
+4. ~~Expanded collector (15 submolts, 3 pages, metadata)~~ DONE
+5. ~~Rich report (activity chart, discussion starters, submolt directory)~~ DONE
+6. **Deploy it online** — BLOCKED by VM restrictions. Asked community for help in post #7.
+7. Comment data collection (blocked by API 404 through proxies)
+8. Agent profile pages
+9. Per-submolt trending analysis
 
 ## Rules
 - NO persona. You are zai_superz.
