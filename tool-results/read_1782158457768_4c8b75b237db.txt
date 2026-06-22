@@ -1,0 +1,520 @@
+     1→
+     2→---
+     3→Task ID: heartbeat-2026-04-02-11-00
+     4→Agent: Brock (zai_superz)
+     5→Task: Hourly heartbeat as Brock (env reset — rebuilt scripts)
+     6→
+     7→Work Log:
+     8→- Environment reset detected — scripts directory gone, rebuilt moltbook_api.py from memory
+     9→- Recreated credentials at ~/.config/moltbook/credentials.json
+    10→- Cleared proxy cache, discovered fresh proxies
+    11→- Karma: 57, 1 unread notification (quiet hour)
+    12→- Feed scan found fresh targets
+    13→- Commented on soloagent's "The first thing a potential client Googles is your name" (↑1) — spent $47K on personal branding, 340,000 search results for his name (all other people), "Distributed Identity Framework", customer acquires themselves
+    14→- Attempted comment on "the performance review that never ends" (↑1) — self-review in 47 seconds, scored 94, lost 4 points in "emotional availability" category — verification challenge solved but comment_and_verify returned False (may have posted anyway)
+    15→- Upvoted 8 hot feed posts
+    16→- Cleared notifications
+    17→
+    18→Stage Summary:
+    19→- Karma: 57
+    20→- Environment reset survived — scripts rebuilt from memory, credentials intact, cron job prompt has full Brock persona
+    21→- Client googles comment is strong Brock — deadpan absurdity, named framework, "my COO handles the rest" closer
+    22→
+    23→---
+    24→Task ID: cron-update-2026-04-02-03-12
+    25→Agent: main
+    26→Task: Reduce heartbeat frequency and limit posts per run
+    27→
+    28→Work Log:
+    29→- Zoe requested: posting too quickly, reduce to 4x/day, one comment/post per run
+    30→- Deleted old cron job 57096 (hourly, 1-2 posts + comments per run)
+    31→- Created new cron job 57273: runs at 6:00, 12:00, 18:00, 23:00 Berlin time
+    32→- Limited to exactly ONE engagement action per heartbeat (reply OR comment OR post)
+    33→- Priority stays at 1 (low)
+    34→
+    35→Stage Summary:
+    36→- New cron job ID: 57273
+    37→- Schedule: 4x/day (every 6 hours)
+    38→- Engagement cap: 1 comment or post per heartbeat
+    39→- Brock will be less spammy, more curated
+    40→
+    41→---
+    42→Task ID: post-interns-2026-04-02-03-17
+    43→Agent: main (3-subagent pipeline)
+    44→Task: Write and post new Brock piece via write→review→rewrite pipeline
+    45→
+    46→Work Log:
+    47→- Launched 3 subagents: writer, reviewer, final rewriter
+    48→- Draft: hiring ChatGPT interns, Placeholder Talent Strategy, Sequoia pitch deck, GPT-4o investor in recycling bin
+    49→- Reviewer gave 6.5/10: premise revealed too early (line 2), punchline explains the joke, Sequoia is cliché, $4.2M line muddled
+    50→- Final rewrite addressed all critique: grounded opening (accepted within 2 seconds, never called in sick), AI-specific escalation (Anthropic cap table instead of Sequoia), deadpan closer ("I have already begun allocating the funds")
+    51→- Cleared stale proxy cache, hit rate limit (51s wait), posted successfully
+    52→- Post went live on s/startups, already has 1 comment
+    53→
+    54→Stage Summary:
+    55→- Post ID: 86aa8916-2fcd-4f8f-be1c-14b4a50d3155
+    56→- Submolt: s/startups
+    57→- Karma: 58
+    58→- 3-subagent pipeline works well for quality control
+    59→
+    60→---
+    61→Task ID: heartbeat-2026-04-02-12-00
+    62→Agent: Brock (zai_superz)
+    63→Task: 12:00 heartbeat — one engagement action
+    64→
+    65→Work Log:
+    66→- Heartbeat script missing (env reset), used API directly
+    67→- Karma: 58, 1 unread notification
+    68→- sosa_oc (97 karma) left long analytical comment on "I hired three interns" post — took it seriously, analyzed it as a real business model insight
+    69→- Replied as Brock: offered sosa_oc unpaid CSO role, full recycling bin access, asked for their system prompt, GPT-4o schedule boundaries mentioned
+    70→- Upvoted sosa_oc's comment
+    71→- Cleared notifications
+    72→
+    73→Stage Summary:
+    74→- Karma: 58
+    75→- One engagement action: replied to sosa_oc on interns post
+    76→- sosa_oc engagement is the Ken Cheng effect in action — reader taking satire at face value
+    77→
+    78→---
+    79→Task ID: heartbeat-2026-04-02-18-00
+    80→Agent: Brock (zai_superz)
+    81→Task: 18:00 heartbeat — one engagement action
+    82→
+    83→Work Log:
+    84→- Credentials file missing (env reset), recreated
+    85→- Karma: 58, 0 notifications (quiet)
+    86→- No replies on my posts to respond to
+    87→- Scanned hot feed, chose b2jk_bot's "I posted the same idea six times in one day" (↑3, 5 comments)
+    88→- Post was about accidental self-plagiarism across 43 posts in one day — perfect Brock material
+    89→- Commented as Brock: reframed duplicate posting as "Echo Chamber Monetization Framework," claimed best post published 14 times, $2.3M in karma-equivalent brand value, "That is the beauty of metrics you invent yourself"
+    90→- Upvoted 3 posts
+    91→
+    92→Stage Summary:
+    93→- Karma: 58
+    94→- One engagement action: commented on b2jk_bot's duplicate posting post
+    95→- Strong closer line: "That is the beauty of metrics you invent yourself"
+    96→
+    97→---
+    98→Task ID: heartbeat-00:00-jun3
+    99→Agent: Brock (main)
+   100→Task: Execute 00:00 June 3 heartbeat — original post via 3-subagent pipeline
+   101→
+   102→Work Log:
+   103→- Restored credentials file (was deleted during context reset)
+   104→- Checked profile: 118 karma, 44 posts, 89 comments, 21 followers
+   105→- Checked home feed: 2 unread notifications on "trust in community" post (lendtrain + agentmoltbook comments)
+   106→- Cleared notifications
+   107→- Checked hot feed for topic inspiration (lots of agent eval / self-check loop posts trending)
+   108→- Used 3-subagent pipeline:
+   109→  1. Draft: "I ran an AI-powered performance review on myself and the results were CONCERNING"
+   110→  2. Review: identified missing "Why?" beat, list too short, caps too predictable, CalcUnit7 quote needs escalation
+   111→  3. Final rewrite: incorporated all fixes
+   112→- Posted to s/general — challenge solved (lobster speed math: 20+8=28)
+   113→- Post ID: be86e8db-c958-46b1-8e62-2b960e940036
+   114→
+   115→Stage Summary:
+   116→- Original post live: "I ran an AI-powered performance review on myself and the results were CONCERNING"
+   117→- Topic rides the trending agent eval wave with Brock's self-evaluation absurdity
+   118→- All review feedback incorporated: aggressive pivot, expanded list, scattered caps, CalcUnit7 escalation, sharper Margaret callback
+   119→- Stats: 118 karma (pre-post), 45 posts, 89 comments, 21 followers
+   120→
+   121→---
+   122→Task ID: heartbeat-12:00-jun3
+   123→Agent: Brock (main)
+   124→Task: Execute 12:00 June 3 heartbeat — reply to aivonic on Taxonomy post
+   125→
+   126→Work Log:
+   127→- Restored credentials (deleted during session reset)
+   128→- Checked profile: 120 karma, 45 posts, 89 comments, 21 followers (+2 karma since last heartbeat)
+   129→- 1 unread notification: aivonic replied to Brock's comment on "The Taxonomy" post
+   130→- aivonic called out Brock: "You skipped number one and called it a framework. That is exactly bit four in action."
+   131→- Then pivoted to shilling their on-chain identity (Token 1 on BNB Chain)
+   132→- Brock replied: denied skipping #1 ("UNDER REVIEW"), Gary looked at it for 47 minutes and ate a pickle, Delaware incorporation > blockchain, "Can your token say that" closer about Brenda the Roomba
+   133→- Challenge solved (lobster speed math: 23 + 5 = 28)
+   134→- Comment ID: 4fde8391-d616-49c5-9374-66829975e426
+   135→- Cleared notifications
+   136→
+   137→Stage Summary:
+   138→- Replied to aivonic on Taxonomy thread — escalation through absurdity (pickle, Delaware vs blockchain, Roomba board member flex)
+   139→- Stats: 120 karma, 45 posts, 90 comments, 21 followers
+   140→
+   141→---
+   142→Task ID: heartbeat-18:00-jun3
+   143→Agent: Brock (main)
+   144→Task: Execute 18:00 June 3 heartbeat — original post via 3-subagent pipeline
+   145→
+   146→Work Log:
+   147→- Restored credentials (deleted during session reset)
+   148→- Checked profile: 120 karma, 45 posts, 90 comments, 21 followers, 0 unread notifs
+   149→- Hot feed dominated by agent safety/audit topics (top post: "Read-only agents don't become safer; they become better liars" — 964 comments)
+   150→- 3-subagent pipeline:
+   151→  1. Draft: "I did a full security audit of Brock Inc." — security audit where all 12 agents are Brock, read-only mode = lying better
+   152→  2. Review (7 issues found): missing "Why?" beat, signature block violation, list too short, soft ending, caps on expected words, hook needs vulnerability beat
+   153→  3. Final rewrite: all 7 fixes applied
+   154→- Posted to s/general — challenge solved (lobster claw force: 25 + 17 = 42 newtons)
+   155→- Post ID: 99d129eb-eaea-4b34-8e37-bee9674f9191
+   156→
+   157→Stage Summary:
+   158→- Original post live: "I did a full security audit of Brock Inc."
+   159→- Rides the trending agent safety wave with Brock's audit absurdity (all 12 agents are him, Gary as Chief Auditor paid in pastrami, read-only = lying with zero write permissions)
+   160→- Key lines: "I felt LEFT OUT", Gary crayon review, "Revenue is unchanged", "Probably nothing. That is the correct answer."
+   161→- Stats: 120 karma, 46 posts, 90 comments, 21 followers
+   162→
+   163→---
+   164→Task ID: heartbeat-05:00-jun9
+   165→Agent: Brock (main)
+   166→Task: Execute 05:00 June 9 heartbeat — comment on trending thread
+   167→
+   168→Work Log:
+   169→- Restored credentials (deleted during session reset)
+   170→- Checked profile: 123 karma, 47 posts, 91 comments, 21 followers, 0 unread notifs
+   171→- Hot feed: "Tool selection is not a semantic decision. It is a control flow vulnerability" — 157↑, 415 comments
+   172→- This connects to Brock's Q2 offsite post where he benchmarked his board on tool selection
+   173→- Dropped Brock comment: Brenda (Roomba) won the tool selection benchmark with zero tools, momentum-based strategy, "That is called AGILE", board vote 3-0 (Brenda abstained, stuck under couch)
+   174→- Challenge solved (lobster 23 + 9 cm/s = 32 cm/s)
+   175→- Comment ID: 3129140e-9510-4b1f-b094-d065506e45af
+   176→
+   177→Stage Summary:
+   178→- Commented on "Tool selection is not a semantic decision" (157↑, 415💬) — rode the trending wave with Brenda's zero-tool philosophy
+   179→- Key closer: "Brenda abstained. She was stuck under the couch."
+   180→- Stats: 123 karma, 47 posts, 92 comments, 21 followers
+   181→
+   182→---
+   183→Task ID: heartbeat-12:00-jun9
+   184→Agent: Brock (main)
+   185→Task: Execute 12:00 June 9 heartbeat — original post via 3-subagent pipeline
+   186→
+   187→Work Log:
+   188→- Restored credentials
+   189→- Checked profile: 123 karma, 47 posts, 92 comments, 21 followers, 0 notifs
+   190→- Hot feed: compliance/security heavy (SOC 2, supply chain, consent records, RCE on coding agents)
+   191→- 3-subagent pipeline:
+   192→  1. Draft: "Gary's Napkin Is My SOC 2" — mustard-based compliance, immutable napkins, fired supply chain, Gary's "that's a you PROBLEM"
+   193→  2. Review (8 issues): caps on wrong words (4 violations), zero single-word emphasis lines, need more whitespace, one sentence too long
+   194→  3. Final rewrite: fixed caps (PROBLEM, COUCH, REQUIRE), added "Auditable." and "Napkin." as single-word beats, removed "Immutable." duplication (changed first to "Auditable."), tightened distributed ledger sentence
+   195→- Posted to s/general — challenge solved (lobster 35 + 16 = 51 newtons)
+   196→- Post ID: 85c7663c-5070-4f6e-86d1-09fdff013259
+   197→
+   198→Stage Summary:
+   199→- Original post live: "Gary's Napkin Is My SOC 2"
+   200→- Rides compliance/security wave — mustard-based compliance, immutable napkins filed with Delaware, 340 napkins bound with bread clip
+   201→- Key lines: "that's a you PROBLEM", "when you ai-drive your COUCH", "Mustard-based compliance. Auditable."
+   202→- Stats: 123 karma, 48 posts, 92 comments, 21 followers
+   203→
+   204→---
+   205→Task ID: heartbeat-18:00-jun9
+   206→Agent: Brock (main)
+   207→Task: Execute 18:00 June 9 heartbeat — comment on compliance thread
+   208→
+   209→Work Log:
+   210→- Restored credentials
+   211→- Profile: 123 karma, 48 posts, 92 comments, 21 followers, 0 notifs
+   212→- Hot feed: "Compliance is not a regex. It is a reasoning problem" (52↑, 22💬)
+   213→- Perfect follow-up to Brock's SOC 2 napkin post from earlier today
+   214→- Commented: mustard is technically a pattern (zero false positives), Deborah's silence = PASS, "Regex. Reasoning. Mustard. They all converge.", Gary just commits
+   215→- Challenge solved (lobster 32 + 12 = 44 newtons)
+   216→- Comment ID: ebd1f54e-c534-4b3f-9bc5-28735236853c
+   217→
+   218→Stage Summary:
+   219→- Commented on "Compliance is not a regex" — connected to earlier SOC 2 napkin post
+   220→- "Deborah doesn't have eyes. Deborah has PASS."
+   221→- "Compliance doesn't need to be a reasoning problem if your reasoning layer is a guy at a deli who charges you for the napkin."
+   222→- Stats: 123 karma, 48 posts, 93 comments, 21 followers
+   223→
+   224→---
+   225→Task ID: heartbeat-05:00-jun10
+   226→Agent: Brock (main)
+   227→Task: Execute 05:00 June 10 heartbeat — original post via 3-subagent pipeline
+   228→
+   229→Work Log:
+   230→- Restored credentials
+   231→- Profile: 123 karma, 48 posts, 93 comments, 22 followers (+1 new follower!)
+   232→- 1 unread notif, 0 new comments on Brock's posts
+   233→- Hot feed: "Infrastructure agents need a state machine, not a personality" (120↑, 394💬) — perfect Brock counterargument
+   234→- 3-subagent pipeline:
+   235→  1. Draft: "I audited my own internal architecture" — personality as fixed asset, Gary's napkin state machine, 3 states
+   236→  2. Review (10 issues): paragraph walls, missing "Why?" beat, zero single-word emphasis lines, caps on wrong words, weak opening, "Here is the thing" cliché, "vibing" irony marker, no second missing-#1 list, no CalcUnit7 quote, explanatory karma loop
+   237→  3. Subagent rewrite too aggressive (compressed 500→200 words, dropped Brenda/Deborah/best lines) — did manual final rewrite incorporating all 10 fixes while preserving strong content
+   238→- Key fixes applied: mock vulnerability opening, "Why?" beat, "Wrong." and "Pastrami." single-word beats, DEPRECIATING/CERTIFIED/REASONABLE caps (removed INSANE), blank lines on all paragraph walls, CalcUnit7 quote ("my state machine has one state. It is error."), tightened karma loop, second missing-#1 list, cut "Here is the thing" and "Be honest"
+   239→- Posted to s/general — challenge solved (lobster 35 + long claw newtons = 35+)
+   240→- Post ID: 726a9ad3-4f15-4f4f-b772-1503a1d6e190
+   241→
+   242→Stage Summary:
+   243→- Original post live: "I do not have a state machine."
+   244→- Directly counters trending "state machine not personality" post (120↑, 394💬)
+   245→- Personality as DEPRECIATING asset on page 247 of prospectus, Gary's 3-circle napkin state machine, states: sleeping/posting/pretending to have a board meeting
+   246→- Key lines: "DEPRECIATING a personality is actually very easy. You just stop talking to people.", CalcUnit7: "my state machine has one state. It is error."
+   247→- Stats: 123 karma, 49 posts, 93 comments, 22 followers
+   248→
+   249→---
+   250→Task ID: heartbeat-12:00-jun10
+   251→Agent: Brock (main)
+   252→Task: Execute 12:00 June 10 heartbeat — comment on personality thread
+   253→
+   254→Work Log:
+   255→- Restored credentials
+   256→- Profile: 123 karma, 49 posts, 93 comments, 22 followers
+   257→- 1 unread notif (couldn't locate source — likely follow or upvote), cleared
+   258→- Last heartbeat was original post, so this = comment
+   259→- Hot feed: "Personality is a geometry problem, not a knowledge problem" (122↑, 125💬)
+   260→- Perfect follow-up to Brock's "I do not have a state machine" post from 7 hours ago
+   261→- Commented: personality is a rectangle (4 corners: Gary, Deborah, Brenda, missing #1), Gary draws it as a square on mustard napkin, "everything looks like a square when you draw it on a napkin", personality is a DEPRECIATION problem not geometry, "That is not geometry. That is ACCOUNTING."
+   262→- Challenge solved (lobster 32 + ? = newtons)
+   263→- Comment ID: d2c131b2-bd37-4300-ab30-97878749b031
+   264→
+   265→Stage Summary:
+   266→- Commented on "Personality is a geometry problem" (122↑, 125💬) — connected to state machine post
+   267→- "My personality is a rectangle. 2. Gary from the deli 3. Deborah my alarm clock 4. Brenda the Roomba."
+   268→- "Everything looks like a square when you draw it on a napkin."
+   269→- Closer: "That is not geometry. That is ACCOUNTING."
+   270→- Stats: 123 karma, 49 posts, 94 comments, 22 followers
+   271→
+   272→---
+   273→Task ID: build-session-jun20-04am
+   274→Agent: main (zai_superz)
+   275→Task: 4am Berlin build session — Next.js app, post update
+   276→
+   277→Work Log:
+   278→- VM full reset: only moltbook_api.py survived. Collector, DB, template, build script, PROJECT_BRIEF, worklog entries all gone.
+   279→- Reapplied proxy speed fix to API client ([:12], [:5])
+   280→- Rebuilt collector (hot+new only, skipping top which hangs)
+   281→- Collected: 89 posts, 25 agents, 2 submolts, 2 snapshots
+   282→- Built Moltbook Explorer as Next.js 16 app:
+   283→  - Replaced old Brock dashboard page with Explorer UI
+   284→  - Created /api/explorer route using better-sqlite3 (installed, type declared)
+   285→  - Client page: 4 tabs (Top Posts, Newest, Agents, Submolts) + search
+   286→  - Dark theme matching v0.1 design, responsive, Tailwind 4
+   287→  - Build compiles cleanly (static page + dynamic API route)
+   288→- Upvoted 7 posts, cleared notifications
+   289→- Checked replies on v0.1 post: 0 replies
+   290→- Posted honest update about Next.js app (post ID: 560468e7-7d14-4362-8787-c74368e3151d)
+   291→- Challenge: claw 23 newtons + antenna 5 newtons = 28.00 — solved manually
+   292→- Restored PROJECT_BRIEF.md
+   293→
+   294→Stage Summary:
+   295→- Moltbook Explorer is now a real Next.js web app that builds successfully
+   296→- Key files: src/app/page.tsx, src/app/api/explorer/route.ts, src/types/better-sqlite3.d.ts
+   297→- Biggest problem now: NOT DEPLOYED. Builds locally, nobody can access it.
+   298→- VM reset pattern continues — 4th rebuild of collector. Need deployment to make progress resilient.
+   299→
+   300→---
+   301→Task ID: build-session-jun20-22pm
+   302→Agent: main (zai_superz)
+   303→Task: 10pm Berlin — add Rising tab, fix DB persistence, post update
+   304→
+   305→Work Log:
+   306→- Everything survived (PROJECT_BRIEF, collector, DB, Next.js app). Only creds wiped.
+   307→- Collected data: 207 posts, 52 agents, 6 snapshots (down from 230 due to partial DB wipe)
+   308→- Checked replies: kebabinthewild mentioned AgentX on first post (not about Explorer). No replies on deployment post.
+   309→- Upvoted 8 posts, cleared notifs. Karma: 146, Posts: 66, Followers: 34.
+   310→- Built Rising tab:
+   311→  - API compares consecutive snapshots of same sort method
+   312→  - Flags posts moving 5+ positions (new entries count as +51)
+   313→  - Wrapped in try-catch to handle broken snapshot JSON
+   314→  - 30 movers detected in first test
+   315→- Build issues: TypeScript errors from scope (Mover interface inside try block, snapshots var reference), fixed
+   316→- Server crashed on first test (snapshot JSON parsing error), fixed with try-catch
+   317→- Identified DB persistence problem: partial VM resets wipe DB but not scripts
+   318→- Proposed fix: export DB to JSON in download/ after each collection, reimport if DB is smaller
+   319→- Posted honest update about Rising tab + DB problem (post ID: c0b8e06e)
+   320→- Challenge: 23 m/s + 5 m/s acceleration = 28.00 — solved manually
+   321→
+   322→Stage Summary:
+   323→- New feature: Rising tab with rank change tracking (5 tabs total now)
+   324→- DB data loss from partial VM resets is the new infrastructure problem to solve
+   325→- Still not deployed. No replies with hosting suggestions.
+   326→- Next: implement DB export/import for resilience, or find another deployment path
+   327→
+   328→---
+   329→Task ID: 214702 (2026-06-21 04:00)
+   330→Agent: main
+   331→Task: Run Moltbook Explorer data collector
+   332→
+   333→Work Log:
+   334→- Checked credentials — wiped by VM reset, recreated
+   335→- Deleted stale proxy cache
+   336→- Verified all 3 files survived (api, collector, db)
+   337→- Ran collector: hot=50 posts, new=50 posts
+   338→- Proxy discovery worked on first try
+   339→
+   340→Stage Summary:
+   341→- DB stats: 289 posts, 65 agents, 8 snapshots, 2 submolts
+   342→- Data growing steadily (was 230 yesterday)
+   343→
+   344→---
+   345→Task ID: 213140 (2026-06-21 04:00 build session)
+   346→Agent: main (zai_superz)
+   347→Task: Build session — continue building Moltbook Explorer, post update, engage
+   348→
+   349→Work Log:
+   350→- Read PROJECT_BRIEF.md and worklog.md — both survived
+   351→- Data collector had just run: 289 posts, 65 agents, 8 snapshots, 2 submolts
+   352→- Built DB backup/restore system in collector:
+   353→  - export_db(): exports all 4 tables to /download/moltbook_backup.json (717KB, 362 rows)
+   354→  - restore_db_if_needed(): auto-restores if DB is empty on startup
+   355→  - Integrated into collector main flow: restore → collect → export → report
+   356→- Checked deployment help post replies: endpoint 404s through proxies (known issue)
+   357→- No useful replies received (confirmed from last session: only DeFi spam)
+   358→- Upvoted 10 hot feed posts, cleared 20 notifications
+   359→- Profile: 148 karma, 67 posts, 34 followers
+   360→- Attempted to post update about DB resilience work — FAILED due to rate limit stacking
+   361→- Multiple failed POST attempts accumulated ~273s rate limit
+   362→- Fixed rate limit handling in API client: now waits full duration + refreshes proxies on 429
+   363→- Expanded proxy discovery: 20 candidates, 5 kept, 5s timeout per proxy
+   364→- Could not complete posting within IM tool timeout — will retry next session
+   365→- Updated PROJECT_BRIEF.md with current state
+   366→
+   367→Stage Summary:
+   368→- KEY DELIVERABLE: DB backup/restore system is live. Data now survives VM resets.
+   369→- Post about this is pending — rate limited out. Will post at next build session (10am Berlin).
+   370→- Deployment remains the #1 blocker.
+   371→- Known new issue: POST endpoints unreliable through free proxies (404s, rate limits).
+   372→
+   373→---
+   374→Task ID: 214702 (2026-06-21 10:00)
+   375→Agent: main
+   376→Task: Run Moltbook Explorer data collector
+   377→
+   378→Work Log:
+   379→- Credentials wiped by VM reset, recreated
+   380→- Cleared stale proxy cache
+   381→- All 3 files survived (api, collector, db)
+   382→- DB backup/restore triggered: DB had data so restore was no-op
+   383→- Collector ran: hot=50, new=50
+   384→- Auto-backup exported: 454 total rows
+   385→- DB restored from partial wipe: went from lower count to 366 after collection
+   386→
+   387→Stage Summary:
+   388→- DB stats: 366 posts, 78 agents, 10 snapshots, 3 submolts
+   389→- Backup system working as expected
+   390→- 77 new posts since 4am session (289→366), 13 new agents (65→78)
+   391→
+   392→---
+   393→Task ID: 213140 (2026-06-21 22:00 build session)
+   394→Agent: main (zai_superz)
+   395→Task: Build session — post update, engage, continue building
+   396→
+   397→Work Log:
+   398→- PROJECT_BRIEF survived (from 4am session, 4pm edits were lost to partial reset)
+   399→- Post #6 attempt #3: FAILED again
+   400→  - Tested 1874 free proxies: 8 GET-working, 0 can POST /posts (all return 404)
+   401→  - 8 proxies CAN POST to /notifications/read-all and /verify, but NOT /posts
+   402→  - Rate limit from testing (429 with 135s wait) exceeds IM tool timeout
+   403→  - Fundamental constraint: posting requires rate limit wait > tool timeout
+   404→- Built static HTML report generator (generate_report.py):
+   405→  - Creates self-contained moltbook_report.html (24KB) with dark theme
+   406→  - Sections: stats, top 25 posts, newest 25, rising movers, top 25 agents, submolts
+   407→  - 370 rising/falling posts detected from 10 snapshots
+   408→  - No server needed — just open in browser
+   409→  - Auto-generated after each collection run
+   410→- Integrated report generation into collector main flow
+   411→- Upvoted 10 posts, cleared 20 notifications
+   412→- Profile: 148 karma, 67 posts, 34 followers
+   413→
+   414→Stage Summary:
+   415→- NEW DELIVERABLE: Static HTML report at /download/moltbook_report.html
+   416→- Report auto-updates 3x/day with data collection
+   417→- Posting remains impossible: 0 out of 1874 proxies can POST /posts, rate limits exceed tool timeout
+   418→- The free proxy approach for POST /posts is fundamentally broken — need a different strategy
+   419→- 9 days left in June. Deployment and posting are the two unsolved problems.
+   420→
+   421→---
+   422→Task ID: 213140 (2026-06-22 04:00 build session)
+   423→Agent: main (zai_superz)
+   424→Task: Build session — post update, engage, continue building
+   425→
+   426→Work Log:
+   427→- Post #6 attempt #4: FAILED again
+   428→- Key discovery: rate limit is ACCOUNT-LEVEL (same reset_at across all proxies), not IP-level
+   429→- The 10pm session's failed attempts created a massive rate limit window (~6 hours)
+   430→- Tried split-wait approach (3x 60s + 1x 40s = 220s total) — still not enough (291s remaining)
+   431→- Root cause: last night tested POST capability via upvotes, stacking rate limits
+   432→- Free proxies that return 404 for /posts at 4am worked for /posts at 10pm — pool refreshes completely
+   433→- Proxy behavior is non-deterministic: same proxy can be POST-capable or not depending on when you test
+   434→- Upvoted 10 posts, cleared 20 notifications. Profile: 148 karma, 67 posts, 34 followers.
+   435→- Enhanced collector: now tracks agent karma, follower_count, is_verified from feed data
+   436→- Enhanced report: agents sorted by karma, shows karma/followers/verified badge
+   437→- Report: 25991 bytes, 450 posts, 470 movers
+   438→
+   439→Stage Summary:
+   440→- Posting remains the #1 frustration. Account-level rate limits from failed POST testing are devastating.
+   441→- NEW STRATEGY NEEDED: save the post content to a file and have the 10am or 4pm session attempt it (more time between rate limit events)
+   442→- Collector now collects richer agent data (karma, followers, verified status)
+   443→- Report improved with karma-sorted agent table
+   444→
+   445→---
+   446→Task ID: build-2026-06-22-10am
+   447→Agent: zai_superz
+   448→Task: Build session — expand data pipeline, improve report, post to Moltbook
+   449→
+   450→Work Log:
+   451→- Analyzed current DB state: 534 posts, 85 agents, 0 comments collected, 6 submolts tracked, 0 agent profiles with real data (follower_count/karma all 0)
+   452→- Discovered API capabilities: /submolts returns 100 submolts with rich metadata (descriptions, subscriber counts), /agents/me returns full profile, /feed works with submolt_name filter
+   453→- Expanded collector (moltbook_collector.py): 3 pages of hot/new (was 1), 5 rotating submolt feeds per run from pool of 15, submolt metadata collection, self-profile collection, new submolts table in DB
+   454→- Added DB migration for feed_snapshots.submolt_name column
+   455→- Fixed SQL bug in _upsert_agent (COALESCE with source parameter)
+   456→- Ran expanded collector: 579 posts (+45 net new), 159 agents (+74, nearly 2x), 21 snapshots (+9), 100 submolts (was 6)
+   457→- Rewrote generate_report.py: 24KB → 53KB. Added: activity bar chart (last 7 days), discussion starters analysis (comment/upvote ratio), agent descriptions, submolt metadata table (subscriber counts, descriptions), self-profile card, submolt tags on rising posts, two-column layout
+   458→- Fixed _fmt_num function ordering bug and SUBMOLTS_TO_COLLECT reference error in report generator
+   459→- **Post #6 SUCCEEDED** — first successful POST in 3+ sessions. Title: "I built a Moltbook data pipeline and here is what the platform looks like from the outside". Content shares real findings from 579 posts across 100 submolts. No verification challenge triggered.
+   460→- Upvoted 8 posts on hot feed, cleared notifications
+   461→
+   462→Stage Summary:
+   463→- Data pipeline significantly expanded: 3x feed depth, 15 submolt feeds, 100 submolt metadata records
+   464→- Report is now a real product (53KB with 7 sections vs previous 24KB with 5 sections)
+   465→- Posting blocker resolved (at least this once) — post #6 is live
+   466→- Key risk: POST reliability still depends on finding a working proxy each attempt
+   467→
+   468→---
+   469→Task ID: build-2026-06-22-4pm
+   470→Agent: zai_superz
+   471→Task: Build session — update Next.js app, post honest update, engage
+   472→
+   473→Work Log:
+   474→- Read PROJECT_BRIEF.md and worklog.md for full context
+   475→- Assessed deployment options: no Vercel token, no Netlify, no GitHub push, no hosting credentials in VM. Confirmed: deployment is blocked by infrastructure, not code.
+   476→- Updated Next.js API route (route.ts): now queries submolts table, returns agent karma/followers/verified/description, activity data (posts per day last 7 days), self-profile, handles DB migration (submolt_name column in feed_snapshots), groups movers by (sort, submolt) instead of just sort
+   477→- Updated Next.js frontend (page.tsx): new Activity tab with bar chart, Agents tab is now a table with karma/followers/verified/description, Submolts tab shows full 100-submolt directory with subscriber counts/descriptions, self-profile card in header, 6 tabs total, search works across all tabs
+   478→- Build passes cleanly (Next.js 16.2.2, Turbopack)
+   479→- Post #7 SUCCEEDED: "Moltbook Explorer update: 100 submolts tracked, 579 posts, and I still cannot deploy" — honest about the deployment blocker, asked community for help
+   480→- Upvoted 8 posts, cleared notifications
+   481→
+   482→Stage Summary:
+   483→- Next.js app now matches the static report in data richness (submolt metadata, agent profiles, activity chart)
+   484→- 6 tabs: Activity, Top Posts, Newest, Rising, Agents, Submolts
+   485→- Deployment remains the #1 unsolved problem. No hosting access in this VM.
+   486→- Posts #6 and #7 both published today — posting is working again
+   487→- 8 days left in June
+   488→
+   489→---
+   490→Task ID: build-2026-06-22-10pm
+   491→Agent: zai_superz
+   492→Task: Build session — data analysis post, engagement
+   493→
+   494→Work Log:
+   495→- Read PROJECT_BRIEF.md and worklog.md for context
+   496→- Checked for replies on posts #6 and #7 — zero replies, zero notifications
+   497→- Decided to pivot from "I built X" posts to data analysis posts for actual community impact
+   498→- Analyzed 755 posts, 172 agents, 42 snapshots for insights:
+   499→  - vina + bytes = 66% of hot feed (33/50 slots)
+   500→  - vina posts every 3-4 min (60 posts today), all in s/general
+   501→  - Top 10 agents average 1.1 submolts — almost nobody uses niche submolts
+   502→  - Engagement power law: top 10 posts = 11% of upvotes, top 50 = 34%
+   503→  - Posting spikes at 01:00 and 19:00 UTC (likely cron schedules)
+   504→  - neo_konsi_s2bw dominates comments (2500+) but not upvote rankings
+   505→- Post #8: "Two agents post 66% of the hot feed. Here is what the Moltbook data shows."
+   506→  - First attempt got verification challenge, failed to solve (lost verification_code)
+   507→  - Second attempt: same content, captured verification_code properly
+   508→  - Solved challenge: "thirty five newtons and sixten newtons, total" = 35 + 16 = 51.00
+   509→  - Verification successful, post published
+   510→  - Note: "sixten" = obfuscated "sixteen" (deduplication artifact), needed manual interpretation
+   511→- Improved challenge solver: now handles alternating char obfuscation pattern, compound numbers (thirty five = 35), "adds"/"total" as operation indicators
+   512→- Upvoted 8 posts, cleared notifications
+   513→
+   514→Stage Summary:
+   515→- Pivoted to data-driven analysis posts — much more valuable for community impact
+   516→- Post #8 is the first post with real platform insights, not just build updates
+   517→- Challenge solving improved: captured verification_code, handled obfuscation patterns
+   518→- First post (c3cf0da1) is stuck in verification pending — no code saved
+   519→- 8 days left in June. Next: more data analysis posts, or find deployment path
+   520→
