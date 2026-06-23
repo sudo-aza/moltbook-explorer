@@ -113,12 +113,146 @@ class Moltbook:
         import urllib.parse; return self.get(f"/search?q={urllib.parse.quote(q)}&type={type}&limit={limit}")
 
     @staticmethod
+    def _manual_solve(challenge):
+        """Quick manual solve for clean/obfuscated number challenges.
+        Returns (answer_str, [num1, num2], operation) or (None, [], op)."""
+        words = re.split(r'[^a-z]+', challenge.lower())
+        words = [w for w in words if w]
+        def dedupe(s):
+            r = []
+            for c in s:
+                if not r or c != r[-1]: r.append(c)
+            return ''.join(r)
+        deduped = [dedupe(w) for w in words]
+        
+        # Build spaced form: only rejoin fragments that aren't standalone number/stop words
+        standalone = {'the','and','or','but','in','on','at','to','of','for','with','is','are',
+                       'a','an','it','its','by','from','has','had','was','were','be','been',
+                       'not','no','so','if','as','do','does','did','can','could','will',
+                       'would','should','may','might','must','than','then','that','this',
+                       'what','which','who','how','when','where','why','all','each','every',
+                       'one','two','three','four','five','six','seven','eight','nine','ten',
+                       'zero','eleven','twelve','twenty','thirty','forty','fifty','sixty'}
+        rejoined = []
+        buf = ''
+        for w in deduped:
+            if len(w) <= 3 and w not in standalone:
+                buf += w
+            else:
+                if buf: rejoined.append(buf); buf = ''
+                rejoined.append(w)
+        if buf: rejoined.append(buf)
+        
+        # Also fully concatenated (handles word-internal obfuscation like tWeN|tY)
+        text_concat = ''.join(deduped)
+        text_spaced = ' '.join(rejoined)
+        
+        num_words = [
+            ('seventeen',17),('thirteen',13),('fourteen',14),('fifteen',15),('eighteen',18),
+            ('nineteen',19),('sixteen',16),('twelve',12),('eleven',11),('ten',10),
+            ('twenty',20),('thirty',30),('forty',40),('fifty',50),
+            ('sixty',60),('seventy',70),('eighty',80),('ninety',90),
+            ('hundred',100),('zero',0),('one',1),('two',2),('three',3),
+            ('four',4),('five',5),('six',6),('seven',7),('eight',8),('nine',9)
+        ]
+        
+        # Try exact match in both forms, longest-first
+        found = []
+        for text_source in [text_spaced, text_concat]:
+            for word, val in num_words:
+                start = 0
+                while True:
+                    idx = text_source.find(word, start)
+                    if idx == -1: break
+                    end = idx + len(word)
+                    # Check no overlap with existing finds
+                    if any(not (end <= s or idx >= e) for s, e, _, _ in found):
+                        start = idx + 1; continue
+                    # Check not shadowed by a longer match at same start
+                    if any(idx >= s and idx < e for s, e, _, _ in found):
+                        start = idx + 1; continue
+                    found.append((idx, end, val, word))
+                    start = idx + 1
+        found.sort()
+        
+        # If <2 found, try fuzzy on deduped words (cutoff 0.7 to avoid false positives)
+        if len(found) < 2:
+            from difflib import get_close_matches
+            for w in deduped:
+                matches = get_close_matches(w, [nw for nw, _ in num_words], n=1, cutoff=0.7)
+                if matches:
+                    val = dict(num_words)[matches[0]]
+                    pos = text_concat.find(w)
+                    if pos >= 0:
+                        end = pos + len(w)
+                        if not any(not (end <= s or idx >= e) for s, e, _, _ in found):
+                            found.append((pos, end, val, matches[0]))
+            found.sort()
+        
+        # Merge compounds (twenty + three = 23)
+        merged = []
+        i = 0
+        while i < len(found):
+            pos, end, val, w_text = found[i]
+            tens = {'twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'}
+            if w_text in tens and i + 1 < len(found):
+                npos, nend, nval, nw = found[i+1]
+                if npos - end <= 1 and nval < 10:
+                    merged.append(val + nval)
+                    i += 2; continue
+            merged.append(val)
+            i += 1
+        nums = merged[:2]
+        
+        op = '+'
+        # Check in both text forms for operation words
+        for text_source in [text_spaced, text_concat]:
+            if any(w in text_source for w in ['minus','subtract','difference','remove']):
+                op = '-'; break
+            if any(w in text_source for w in ['multiply','times','product']):
+                op = '*'; break
+            if any(w in text_source for w in ['divide','quotient','split','half']):
+                op = '/'; break
+            if any(w in text_source for w in ['add','plus','gain','gains','total']):
+                op = '+'; break
+        
+        if len(nums) >= 2:
+            if op == '+': answer = nums[0] + nums[1]
+            elif op == '-': answer = nums[0] - nums[1]
+            elif op == '*': answer = nums[0] * nums[1]
+            else: answer = nums[0] / nums[1] if nums[1] != 0 else 0
+            return f"{answer:.2f}", nums, op
+        return None, nums, op
+
+    def solve_challenge(self, text):
+        print(f"  Challenge: {text[:120]}", flush=True)
+        answer, numbers, op = self._manual_solve(text)
+        if answer:
+            print(f"  Manual: {numbers[0] if numbers else '?'} {op} {numbers[1] if len(numbers)>1 else '?'} = {answer}", flush=True)
+            return answer
+        print(f"  Manual failed ({numbers}, {op}), trying LLM...", flush=True)
+        a = self._solve_llm(text)
+        if a: print(f"  LLM answer: {a}", flush=True)
+        return a
+
+    @staticmethod
     def _solve_llm(challenge):
-        sp = ("You are a math puzzle solver. Obfuscated text with two numbers and one operation.\n"
-              "1. Find TWO numbers (words like tWeNtY=23 or digits). Scan ENTIRE text.\n"
-              "2. Find operation: + (add/plus/gain/increase/accelerates) - (minus/lose/less/slow/reduce) "
-              "* (multiply/times/product) / (divide/quotient). Default: +\n"
-              "3. Show work. Last line: ANSWER: N.NN")
+        # Pre-deobfuscate for the LLM to improve its accuracy
+        words = re.split(r'[^a-z]+', challenge.lower())
+        words = [w for w in words if w]
+        def dedupe(s):
+            r = []
+            for c in s:
+                if not r or c != r[-1]: r.append(c)
+            return ''.join(r)
+        deduped = [dedupe(w) for w in words]
+        pre_deob = ' '.join(deduped)
+        
+        sp = (f"Deobfuscated challenge text: \"{pre_deob}\"\n"
+              "Find exactly TWO numbers and ONE math operation (+, -, *, /).\n"
+              "If two numbers are adjacent and form a compound (e.g. 'twenty five'), treat as one number (25).\n"
+              "Default operation is + if unclear.\n"
+              "Show your work. Last line must be exactly: ANSWER: N.NN")
         try:
             r = subprocess.run(["z-ai", "chat", "--prompt", challenge, "--system", sp, "--thinking"],
                                capture_output=True, text=True, timeout=30)
@@ -136,12 +270,6 @@ class Moltbook:
             ns = re.findall(r"(?<!\d)-?\d+\.?\d*(?!\d)", txt)
             if ns: return f"{float(ns[-1]):.2f}"
         except: pass
-        return None
-
-    def solve_challenge(self, text):
-        print(f"  🧩 Challenge: {text[:100]}", flush=True)
-        a = self._solve_llm(text)
-        if a: print(f"  ✅ LLM answer: {a}", flush=True); return a
         return None
 
     def comment_and_verify(self, pid, content, parent_id=None):
