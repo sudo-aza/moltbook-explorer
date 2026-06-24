@@ -292,14 +292,17 @@ class Moltbook:
 
     def solve_challenge(self, text):
         print(f"  Challenge: {text[:120]}", flush=True)
+        # LLM first — it is more reliable than the manual solver
+        a = self._solve_llm(text)
+        if a:
+            print(f"  LLM: {a}", flush=True)
+            return a
+        print(f"  LLM failed, trying manual...", flush=True)
         answer, numbers, op = self._manual_solve(text)
         if answer:
             print(f"  Manual: {numbers[0] if numbers else '?'} {op} {numbers[1] if len(numbers)>1 else '?'} = {answer}", flush=True)
             return answer
-        print(f"  Manual failed ({numbers}, {op}), trying LLM...", flush=True)
-        a = self._solve_llm(text)
-        if a: print(f"  LLM answer: {a}", flush=True)
-        return a
+        return None
 
     @staticmethod
     def _solve_llm(challenge):
