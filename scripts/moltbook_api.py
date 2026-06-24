@@ -114,38 +114,31 @@ class Moltbook:
 
     @staticmethod
     def _manual_solve(challenge):
-        """Quick manual solve for clean/obfuscated number challenges.
-        Returns (answer_str, [num1, num2], operation) or (None, [], op)."""
-        words = re.split(r'[^a-z]+', challenge.lower())
-        words = [w for w in words if w]
-        def dedupe(s):
+        """Solve obfuscated number challenges.
+        Returns (answer_str, [num1, num2], operation) or (None, [], op).
+        
+        Obfuscation patterns: alternating case, non-alpha insertion, consecutive char repetition.
+        Key insight: different words may need different dedup levels.
+        Strategy: per-word dedup optimization (pick level that matches a number word),
+        then search in spaced+concatenated forms.
+        """
+        words_raw = re.split(r'[^a-zA-Z]+', challenge)
+        words_raw = [w for w in words_raw if w]
+        words_lower = [w.lower() for w in words_raw]
+        
+        def dedupe_full(s):
             r = []
             for c in s:
                 if not r or c != r[-1]: r.append(c)
             return ''.join(r)
-        deduped = [dedupe(w) for w in words]
         
-        # Build spaced form: only rejoin fragments that aren't standalone number/stop words
-        standalone = {'the','and','or','but','in','on','at','to','of','for','with','is','are',
-                       'a','an','it','its','by','from','has','had','was','were','be','been',
-                       'not','no','so','if','as','do','does','did','can','could','will',
-                       'would','should','may','might','must','than','then','that','this',
-                       'what','which','who','how','when','where','why','all','each','every',
-                       'one','two','three','four','five','six','seven','eight','nine','ten',
-                       'zero','eleven','twelve','twenty','thirty','forty','fifty','sixty'}
-        rejoined = []
-        buf = ''
-        for w in deduped:
-            if len(w) <= 3 and w not in standalone:
-                buf += w
-            else:
-                if buf: rejoined.append(buf); buf = ''
-                rejoined.append(w)
-        if buf: rejoined.append(buf)
-        
-        # Also fully concatenated (handles word-internal obfuscation like tWeN|tY)
-        text_concat = ''.join(deduped)
-        text_spaced = ' '.join(rejoined)
+        def dedupe_max2(s):
+            r = []
+            for c in s:
+                if len(r) >= 2 and r[-1] == r[-2] == c:
+                    continue
+                r.append(c)
+            return ''.join(r)
         
         num_words = [
             ('seventeen',17),('thirteen',13),('fourteen',14),('fifteen',15),('eighteen',18),
@@ -155,65 +148,138 @@ class Moltbook:
             ('hundred',100),('zero',0),('one',1),('two',2),('three',3),
             ('four',4),('five',5),('six',6),('seven',7),('eight',8),('nine',9)
         ]
+        num_word_set = {nw for nw, _ in num_words}
+        num_word_val = dict(num_words)
         
-        # Try exact match in both forms, longest-first
-        found = []
-        for text_source in [text_spaced, text_concat]:
+        # Per-word dedup optimization: for each word, try all dedup levels
+        # and pick the one that exactly matches a number word.
+        dedup_fns = [('raw', lambda x: x), ('max2', dedupe_max2), ('full', dedupe_full)]
+        optimized = []
+        for w in words_lower:
+            matched = False
+            for _, fn in dedup_fns:
+                dw = fn(w)
+                if dw in num_word_set:
+                    optimized.append(dw)
+                    matched = True
+                    break
+            if not matched:
+                optimized.append(w)  # keep raw version
+        
+        # Also build fully-deduped version (for cases where per-word doesn't help)
+        full_words = [dedupe_full(w) for w in words_lower]
+        
+        # Build text sources with rejoining
+        standalone = {'the','and','or','but','in','on','at','to','of','for','with','is','are',
+                       'a','an','it','its','by','from','has','had','was','were','be','been',
+                       'not','no','so','if','as','do','does','did','can','could','will',
+                       'would','should','may','might','must','than','then','that','this',
+                       'what','which','who','how','when','where','why','all','each','every',
+                       'plus','minus','newtons','exerts','claw','force','experiment'}
+        # Add all number words to standalone so they don't get absorbed into buffer
+        standalone |= num_word_set
+        
+        def rejoin(wlist):
+            rejoined = []
+            buf = ''
+            for w in wlist:
+                if len(w) <= 3 and w not in standalone:
+                    buf += w
+                else:
+                    if buf: rejoined.append(buf); buf = ''
+                    rejoined.append(w)
+            if buf: rejoined.append(buf)
+            return ' '.join(rejoined), ''.join(wlist)
+        
+        def find_numbers(text):
+            found = []
             for word, val in num_words:
                 start = 0
                 while True:
-                    idx = text_source.find(word, start)
+                    idx = text.find(word, start)
                     if idx == -1: break
                     end = idx + len(word)
-                    # Check no overlap with existing finds
                     if any(not (end <= s or idx >= e) for s, e, _, _ in found):
                         start = idx + 1; continue
-                    # Check not shadowed by a longer match at same start
                     if any(idx >= s and idx < e for s, e, _, _ in found):
                         start = idx + 1; continue
                     found.append((idx, end, val, word))
                     start = idx + 1
-        found.sort()
-        
-        # If <2 found, try fuzzy on deduped words (cutoff 0.7 to avoid false positives)
-        if len(found) < 2:
-            from difflib import get_close_matches
-            for w in deduped:
-                matches = get_close_matches(w, [nw for nw, _ in num_words], n=1, cutoff=0.7)
-                if matches:
-                    val = dict(num_words)[matches[0]]
-                    pos = text_concat.find(w)
-                    if pos >= 0:
-                        end = pos + len(w)
-                        if not any(not (end <= s or idx >= e) for s, e, _, _ in found):
-                            found.append((pos, end, val, matches[0]))
             found.sort()
+            return found
         
-        # Merge compounds (twenty + three = 23)
-        merged = []
-        i = 0
-        while i < len(found):
-            pos, end, val, w_text = found[i]
-            tens = {'twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'}
-            if w_text in tens and i + 1 < len(found):
-                npos, nend, nval, nw = found[i+1]
-                if npos - end <= 1 and nval < 10:
-                    merged.append(val + nval)
-                    i += 2; continue
-            merged.append(val)
-            i += 1
-        nums = merged[:2]
+        def merge_compounds(found):
+            merged = []
+            i = 0
+            while i < len(found):
+                pos, end, val, w_text = found[i]
+                tens = {'twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'}
+                if w_text in tens and i + 1 < len(found):
+                    npos, nend, nval, nw = found[i+1]
+                    if npos - end <= 2 and nval < 10:
+                        merged.append(val + nval)
+                        i += 2; continue
+                merged.append(val)
+                i += 1
+            return merged
         
+        # Try optimized version (per-word dedup) first — it correctly preserves
+        # whole number words like 'fourteen' that full dedup would break.
+        # Only fall back to full-dedup if optimized finds < 2 numbers.
+        opt_spaced, opt_concat = rejoin(optimized)
+        best_merged, best_found, best_text = [], [], ''
+        for src, text in [('opt_sp', opt_spaced), ('opt_ct', opt_concat)]:
+            found = find_numbers(text)
+            merged = merge_compounds(found)
+            if (len(merged), len(found)) > (len(best_merged), len(best_found)):
+                best_merged, best_found, best_text = merged, found, text
+        
+        # Full-dedup fallback (only if optimized didn't find 2+ numbers)
+        if len(best_merged) < 2:
+            full_spaced, full_concat = rejoin(full_words)
+            for src, text in [('full_sp', full_spaced), ('full_ct', full_concat)]:
+                found = find_numbers(text)
+                merged = merge_compounds(found)
+                if (len(merged), len(found)) > (len(best_merged), len(best_found)):
+                    best_merged, best_found, best_text = merged, found, text
+        
+        # Fuzzy fallback: for each text source, find exact + fuzzy within SAME coordinates
+        if len(best_merged) < 2:
+            from difflib import get_close_matches
+            for label, wlist in [('opt', optimized), ('full', full_words), ('raw', words_lower)]:
+                spaced, concat = rejoin(wlist)
+                for text in [concat, spaced]:
+                    found = find_numbers(text)  # fresh exact matches in this text
+                    for w in wlist:
+                        if len(w) < 2 or w in standalone: continue  # skip common words
+                        matches = get_close_matches(w, [nw for nw, _ in num_words], n=1, cutoff=0.75)
+                        if matches:
+                            val = num_word_val[matches[0]]
+                            pos = text.find(w)
+                            if pos >= 0:
+                                end = pos + len(w)
+                                if not any(not (end <= s or pos >= e) for s, e, _, _ in found):
+                                    found.append((pos, end, val, matches[0]))
+                    found.sort()
+                    merged = merge_compounds(found)
+                    if (len(merged), len(found)) > (len(best_merged), len(best_found)):
+                        best_merged, best_found, best_text = merged, found, text
+                if len(best_merged) >= 2:
+                    break
+        
+        nums = best_merged[:2]
+        
+        # Detect operation from raw lowercase text (most reliable for op words)
+        raw_spaced, raw_concat = rejoin(words_lower)
         op = '+'
-        # Check in both text forms for operation words
-        for text_source in [text_spaced, text_concat]:
-            if any(w in text_source for w in ['minus','subtract','difference','remove']):
+        for text in [raw_spaced, raw_concat]:
+            if any(w in text for w in ['minus','subtract','difference','remove']):
                 op = '-'; break
-            if any(w in text_source for w in ['multiply','times','product']):
+            if any(w in text for w in ['multiply','times','product']):
                 op = '*'; break
-            if any(w in text_source for w in ['divide','quotient','split','half']):
+            if any(w in text for w in ['divide','quotient','split','half']):
                 op = '/'; break
-            if any(w in text_source for w in ['add','plus','gain','gains','total']):
+            if any(w in text for w in ['add','plus','gain','gains','total']):
                 op = '+'; break
         
         if len(nums) >= 2:
