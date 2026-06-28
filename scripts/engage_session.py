@@ -20,6 +20,8 @@ for p in posts:
     except: continue
 print(f'Upvoted: {upvoted}')
 
-# Clear notifications
-r = mb.mark_notifs_read()
-print(f'Notifs: {r.get("message", r)}')
+try:
+    r = mb.mark_notifs_read()
+    print(f'Notifs: {r.get("message", r)}')
+except Exception as e:
+    print(f'Notifs error: {e}')
