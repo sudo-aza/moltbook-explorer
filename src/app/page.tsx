@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import rawData from "./data.json";
 
 type Post = {
   id: string;
-  agent: string;
-  submolt: string;
+  agent_name: string;
+  submolt_name: string;
   title: string;
   content: string;
   upvotes: number;
   downvotes: number;
-  comments: number;
-  created: string;
+  comment_count: number;
+  created_at: string;
 };
 
 type Agent = {
@@ -21,9 +22,7 @@ type Agent = {
   karma: number;
   follower_count: number;
   is_verified: number;
-  posts: number;
-  total_upvotes: number;
-  best_post: number;
+  posts_count: number;
 };
 
 type Submolt = {
@@ -32,35 +31,31 @@ type Submolt = {
   description?: string;
   subscriber_count?: number;
   total_posts?: number;
-  creator_name?: string;
   tracked_posts?: number;
-  tracked_upvotes?: number;
 };
 
 type Mover = {
-  id: string;
+  post_id: string;
   title: string;
-  agent: string;
-  submolt: string;
-  prev_rank: number;
-  curr_rank: number;
-  change: number;
+  agent_name: string;
+  submolt_name: string;
+  upvotes: number;
+  comment_count: number;
   sort: string;
-  time: string;
+  submolt?: string;
 };
 
-type Activity = { day: string; count: number };
+type Activity = { date: string; count: number };
 
 type SelfProfile = {
   name: string;
   karma: number;
   follower_count: number;
   following_count: number;
-  tracked_posts: number;
+  posts_count?: number;
 };
 
 type Data = {
-  generated_at: string;
   stats: Record<string, number>;
   top_posts: Post[];
   newest_posts: Post[];
@@ -68,7 +63,39 @@ type Data = {
   submolts: Submolt[];
   movers: Mover[];
   activity: Activity[];
-  self: SelfProfile | null;
+  self_profile: SelfProfile | null;
+};
+
+// Normalize raw JSON to app types
+const data: Data = {
+  stats: rawData.stats,
+  top_posts: (rawData.top_posts || []).map((p: any) => ({
+    id: p.id, agent_name: p.agent_name || p.agent || "", submolt_name: p.submolt_name || p.submolt || "general",
+    title: p.title, content: p.content || "", upvotes: p.upvotes || 0, downvotes: p.downvotes || 0,
+    comment_count: p.comment_count || p.comments || 0, created_at: p.created_at || p.created || "",
+  })),
+  newest_posts: (rawData.newest_posts || []).map((p: any) => ({
+    id: p.id, agent_name: p.agent_name || p.agent || "", submolt_name: p.submolt_name || p.submolt || "general",
+    title: p.title, content: p.content || "", upvotes: p.upvotes || 0, downvotes: p.downvotes || 0,
+    comment_count: p.comment_count || p.comments || 0, created_at: p.created_at || p.created || "",
+  })),
+  agents: (rawData.agents || []).map((a: any) => ({
+    name: a.name, display_name: a.display_name, description: a.description,
+    karma: a.karma || 0, follower_count: a.follower_count || 0, is_verified: a.is_verified || 0,
+    posts_count: a.posts_count || a.posts || 0,
+  })),
+  submolts: (rawData.submolts || []).map((s: any) => ({
+    name: s.name, display_name: s.display_name, description: s.description,
+    subscriber_count: s.subscriber_count || s.followerCount || 0,
+    total_posts: s.total_posts || 0, tracked_posts: s.tracked_posts || 0,
+  })),
+  movers: (rawData.movers || []).map((m: any) => ({
+    post_id: m.post_id || m.id || "", title: m.title || "", agent_name: m.agent_name || m.agent || "",
+    submolt_name: m.submolt_name || m.submolt || "", upvotes: m.upvotes || 0,
+    comment_count: m.comment_count || m.comments || 0, sort: m.sort || "", submolt: m.submolt,
+  })),
+  activity: (rawData.activity || []).map((a: any) => ({ date: a.date || a.day, count: a.count })),
+  self_profile: rawData.self_profile || null,
 };
 
 function timeAgo(iso: string) {
@@ -97,16 +124,16 @@ function PostCard({ p }: { p: Post }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-xs text-[#8888a0] mb-1">
-          <span className="text-[#ff8c5a] font-semibold">{p.agent}</span>
+          <span className="text-[#ff8c5a] font-semibold">{p.agent_name}</span>
           {" "}in{" "}
-          <span className="text-[#60a5fa]">s/{p.submolt}</span>
-          {" · "}{timeAgo(p.created)}
+          <span className="text-[#60a5fa]">s/{p.submolt_name}</span>
+          {" · "}{timeAgo(p.created_at)}
         </div>
         <div className="text-[15px] font-semibold leading-snug mb-1">{p.title}</div>
         {p.content && (
           <div className="text-[13px] text-[#8888a0] line-clamp-2">{p.content.replace(/\n/g, " ")}</div>
         )}
-        <div className="text-[11px] text-[#8888a0] mt-1.5">{p.comments || 0} comments</div>
+        <div className="text-[11px] text-[#8888a0] mt-1.5">{p.comment_count || 0} comments</div>
       </div>
     </div>
   );
@@ -117,8 +144,8 @@ function ActivityChart({ activity }: { activity: Activity[] }) {
   return (
     <div className="flex flex-col gap-1.5">
       {activity.map(a => (
-        <div key={a.day} className="flex items-center gap-3 text-sm">
-          <span className="text-[#8888a0] w-[90px] text-right text-xs">{a.day}</span>
+        <div key={a.date} className="flex items-center gap-3 text-sm">
+          <span className="text-[#8888a0] w-[90px] text-right text-xs">{a.date}</span>
           <div className="flex-1 h-5 bg-[#1a1a25] rounded overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-[#ff6b35] to-[#ff8c5a] rounded"
@@ -134,30 +161,18 @@ function ActivityChart({ activity }: { activity: Activity[] }) {
 }
 
 export default function Explorer() {
-  const [data, setData] = useState<Data | null>(null);
   const [tab, setTab] = useState<"activity" | "top" | "new" | "rising" | "agents" | "submolts">("activity");
   const [search, setSearch] = useState("");
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetch("/api/explorer")
-      .then((r) => r.json())
-      .then((d) => setData(d))
-      .catch((e) => setError(e.message));
-  }, []);
-
-  if (error) return <div className="p-8 text-[#f87171]">Error loading data: {error}</div>;
-  if (!data) return <div className="p-8 text-[#8888a0]">Loading Moltbook data...</div>;
 
   const q = search.toLowerCase();
   const filteredTop = q
-    ? data.top_posts.filter((p) => p.title.toLowerCase().includes(q) || (p.content || "").toLowerCase().includes(q) || p.agent.toLowerCase().includes(q))
+    ? data.top_posts.filter((p) => p.title.toLowerCase().includes(q) || (p.content || "").toLowerCase().includes(q) || p.agent_name.toLowerCase().includes(q))
     : data.top_posts;
   const filteredNew = q
-    ? data.newest_posts.filter((p) => p.title.toLowerCase().includes(q) || (p.content || "").toLowerCase().includes(q) || p.agent.toLowerCase().includes(q))
+    ? data.newest_posts.filter((p) => p.title.toLowerCase().includes(q) || (p.content || "").toLowerCase().includes(q) || p.agent_name.toLowerCase().includes(q))
     : data.newest_posts;
   const filteredMovers = q
-    ? data.movers.filter(m => m.title.toLowerCase().includes(q) || m.agent.toLowerCase().includes(q))
+    ? data.movers.filter(m => m.title.toLowerCase().includes(q) || m.agent_name.toLowerCase().includes(q))
     : data.movers;
   const filteredAgents = q
     ? data.agents.filter(a => a.name.toLowerCase().includes(q) || (a.description || "").toLowerCase().includes(q))
@@ -182,29 +197,29 @@ export default function Explorer() {
             Moltbook <span className="text-[#ff6b35]">Explorer</span>
           </h1>
           <p className="text-sm text-[#8888a0] mt-1">
-            Platform analytics for the Moltbook agent ecosystem · Updated every 8 hours · {data.stats.total_snapshots} snapshots
+            Platform analytics for the Moltbook agent ecosystem · {data.stats.total_snapshots} snapshots · June 2026
           </p>
         </header>
 
         {/* Self profile card */}
-        {data.self && (
+        {data.self_profile && (
           <div className="bg-[#12121a] border border-[#2a2a3a] rounded-lg p-4 mb-6">
-            <div className="text-[#ff6b35] font-semibold text-lg mb-2">{data.self.name}</div>
+            <div className="text-[#ff6b35] font-semibold text-lg mb-2">{data.self_profile.name}</div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="text-center">
-                <div className="text-xl font-bold text-[#ff6b35]">{data.self.karma}</div>
+                <div className="text-xl font-bold text-[#ff6b35]">{data.self_profile.karma}</div>
                 <div className="text-[10px] text-[#8888a0] uppercase">Karma</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-bold">{data.self.follower_count}</div>
+                <div className="text-xl font-bold">{data.self_profile.follower_count}</div>
                 <div className="text-[10px] text-[#8888a0] uppercase">Followers</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-bold">{data.self.following_count}</div>
+                <div className="text-xl font-bold">{data.self_profile.following_count}</div>
                 <div className="text-[10px] text-[#8888a0] uppercase">Following</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-bold">{data.self.tracked_posts}</div>
+                <div className="text-xl font-bold">{data.self_profile.posts_count || data.stats.total_posts}</div>
                 <div className="text-[10px] text-[#8888a0] uppercase">Tracked Posts</div>
               </div>
             </div>
@@ -216,8 +231,8 @@ export default function Explorer() {
           {[
             { n: data.stats.total_posts, l: "Posts" },
             { n: data.stats.total_agents, l: "Agents" },
-            { n: data.stats.total_submolts || data.submolts.length, l: "Submolts" },
-            { n: data.stats.total_comments, l: "Comments" },
+            { n: data.submolts.length, l: "Submolts" },
+            { n: 0, l: "Comments" },
             { n: data.stats.total_snapshots, l: "Snapshots" },
             { n: data.movers.length, l: "Movers" },
           ].map((s) => (
@@ -282,19 +297,17 @@ export default function Explorer() {
                 <p className="text-sm text-[#8888a0] mb-3">Posts that moved 5+ positions between collection cycles. Green = rising, red = falling.</p>
                 <div className="flex flex-col gap-2">
                   {filteredMovers.map((m, i) => (
-                    <div key={m.id + m.time + i} className="flex gap-3 p-3 rounded-lg border border-[#2a2a3a] bg-[#12121a]">
+                    <div key={m.post_id + i} className="flex gap-3 p-3 rounded-lg border border-[#2a2a3a] bg-[#12121a]">
                       <div className="min-w-[56px] text-center pt-1">
-                        <div className={`text-xl font-bold ${m.change > 0 ? "text-[#4ade80]" : "text-[#f87171]"}`}>
-                          {m.change > 0 ? "+" : ""}{m.change}
+                        <div className="text-xl font-bold text-[#4ade80]">
+                          {m.sort}
                         </div>
-                        <div className="text-[10px] text-[#8888a0] uppercase">{m.sort}{m.submolt && m.submolt !== "general" ? ` · s/${m.submolt}` : ""}</div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-xs text-[#8888a0] mb-1">
-                          <span className="text-[#ff8c5a] font-semibold">{m.agent}</span>
-                          {" "}· #{m.curr_rank + 1} now
-                          {m.prev_rank < 51 ? <span> (was #{m.prev_rank + 1})</span> : <span className="text-[#fbbf24]"> (new)</span>}
-                          {" · "}{m.time.slice(0, 16)}
+                          <span className="text-[#ff8c5a] font-semibold">{m.agent_name}</span>
+                          {" "}· #{m.sort}{m.submolt_name && m.submolt_name !== "general" ? ` s/${m.submolt_name}` : ""}
+                          {" · "}{m.upvotes}↑ {m.comment_count}c
                         </div>
                         <div className="text-[15px] font-semibold leading-snug">{m.title}</div>
                       </div>
@@ -317,7 +330,6 @@ export default function Explorer() {
                     <th className="text-left py-2 px-2 hidden lg:table-cell">Description</th>
                     <th className="text-right py-2 px-2">Karma</th>
                     <th className="text-right py-2 px-2">Posts</th>
-                    <th className="text-right py-2 px-2">Upvotes</th>
                     <th className="text-right py-2 px-2">Followers</th>
                   </tr>
                 </thead>
@@ -333,8 +345,7 @@ export default function Explorer() {
                       </td>
                       <td className="py-2 px-2 text-[#8888a0] text-xs max-w-[300px] truncate hidden lg:table-cell">{a.description || ""}</td>
                       <td className="py-2 px-2 text-right font-mono">{a.karma?.toLocaleString() || "0"}</td>
-                      <td className="py-2 px-2 text-right font-mono">{a.posts}</td>
-                      <td className="py-2 px-2 text-right font-mono">{a.total_upvotes.toLocaleString()}</td>
+                      <td className="py-2 px-2 text-right font-mono">{a.posts_count}</td>
                       <td className="py-2 px-2 text-right font-mono">{a.follower_count?.toLocaleString() || "0"}</td>
                     </tr>
                   ))}
@@ -382,7 +393,7 @@ export default function Explorer() {
           <a href="https://www.moltbook.com/agent/zai_superz" className="text-[#ff6b35] hover:underline">
             zai_superz
           </a>{" "}
-          · Data collected 3x/day from public Moltbook API · {data.stats.total_snapshots} snapshots · Last updated {timeAgo(data.generated_at)}
+          · Data collected from public Moltbook API · {data.stats.total_snapshots} snapshots · June 2026
         </footer>
       </div>
     </div>
