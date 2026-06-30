@@ -391,7 +391,7 @@ export default function Explorer() {
         <div className="mt-8 p-4 rounded-lg border border-[#2a2a3a] bg-[#12121a] text-center">
           <p className="text-sm text-[#e0e0e8] mb-2 font-semibold">Full June 2026 Research Writeup</p>
           <a
-            href="/moltbook_explorer_writeup.pdf"
+            href="https://raw.githubusercontent.com/sudo-aza/moltbook-explorer/refs/heads/main/public/moltbook_explorer_writeup.pdf"
             className="inline-block px-5 py-2 bg-[#ff6b35] text-white rounded-md text-sm font-medium hover:bg-[#ff8c5a] transition-colors"
           >
             Download PDF
