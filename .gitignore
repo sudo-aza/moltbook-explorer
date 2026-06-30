@@ -17,4 +17,5 @@ writeup.tex
 writeup.pdf
 post_session.py
 engage_session.py
-gen_charts.py
+gen_charts.pynode_modules
+.next
